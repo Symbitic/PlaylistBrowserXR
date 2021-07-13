@@ -1,6 +1,6 @@
 # Playlist Browser XR
 
-[![Deploy](https://github.com/Symbitic/PlaylistBrowserXR/actions/workflows/ci.yml/badge.svg)](https://github.com/Symbitic/PlaylistBrowserXR/actions/workflows/ci.yml)
+[![Deploy](https://github.com/Symbitic/PlaylistBrowserXR/actions/workflows/azure-static-web-apps-wonderful-rock-0cfdbe70f.yml/badge.svg)](https://github.com/Symbitic/PlaylistBrowserXR/actions/workflows/azure-static-web-apps-wonderful-rock-0cfdbe70f.yml)
 [![GitHub License](https://img.shields.io/github/license/Symbitic/PlaylistBrowserXR?label=License&style=flat-square)](https://github.com/Symbitic/PlaylistBrowserXR/blob/master/LICENSE.md)
 
 Browse Spotify playlists in Virtual Reality.
@@ -77,12 +77,11 @@ A Spotify account costs nothing (although the premium account will greatly
 enhance the experience). The free account for Azure will be enough for our
 needs, but you will need a paid ngrok account for local development.
 
-WebXR *requires* HTTPS. If you plan on testing on a device that is not the
-same machine you plan on running on (i.e. an Oculus Quest), then you will
-need a valid certificate. Local self-signed certificates won't work.
-Ngrok does offer free accounts, but the domain name is not reserved and may
-change. Since Spotify requires us to whitelist accepted redirect URLs before
-OAuth will work, that means we need a reserved domain name.
+WebXR *requires* HTTPS. If you plan on testing on a non-local device
+(i.e. Oculus Quest), then you will need a valid certificate. Local self-signed
+certificates won't work. Ngrok does offer free accounts, but the domain name is
+not reserved and may change. Since Spotify requires us to whitelist accepted
+redirect URLs before OAuth will work, that means we need a reserved domain name.
 
 ## Getting Started
 
@@ -90,6 +89,8 @@ OAuth will work, that means we need a reserved domain name.
 2. Follow the steps [here](https://docs.microsoft.com/en-us/azure/static-web-apps/get-started-cli) to create a new Azure Static Web App. Make sure you take note of the URL for your new web app.
 3. Create a Spotify developer application. Take note of the client ID and client secret. Make sure to add `https://MY_NGROK_DOMAIN.ngrok.io/callback.html` and `https://MY_AZURE_URL.azurestaticapps.net/callback.html` to the Redirect URIs.
 4. Rename the file `.env.sample` to `.env` and replace the value of `SPOTIFY_CLIENT_ID` and `SPOTIFY_CLIENT_SECRET`.
+5. Edit the GitHub workflow file that was created in Step 2 (see note below).
+6. Update the badge locations in this file.
 
 Once all that is done, you can build and run it like a standard Node.js web project.
 
@@ -101,6 +102,10 @@ In a separate window, make sure you start ngrok:
     ngrok http --hostname MYDOMAIN.ngrok.io --host-header=rewrite 8989
 
 After that, just visit `https://MYDOMAIN.ngrok.io` in your VR headset, and everything should be good.
+
+**NOTE: You may have to open `api/local.settings.json` and set `FUNCTIONS_WORKER_RUNTIME` to `node` for it to work.**
+
+**NOTE: When you run step 2, the first CI build in GitHub actions will fail. That's okay; just copy the content from `.github/workflows/ci.example.yml` and paste it into the `azure-static-web-apps-` workflow file that was created. Make sure you replace `secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_`. You will also need to add `SPOTIFY_CLIENT_ID` as repository secret in GitHub settings.**
 
 ## License
 
