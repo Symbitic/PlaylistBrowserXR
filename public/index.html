@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <title><%= htmlWebpackPlugin.options.title %></title>
+  <style>
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      padding: 0;
+      margin: 0;
+      overflow: hidden;
+      position: fixed;
+      touch-action: none;
+      -ms-touch-action: none;
+    }
+
+    body {
+      margin: 0;
+    }
+
+    #root {
+      width: 100%;
+      height: 100%;
+      outline: none;
+      touch-action: none;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    #errorMessage {
+      color: red;
+      width: 100%;
+      height: 60px;
+      position: absolute;
+      top: 50%;
+      margin-top: -30px;
+      background-color: #EEEEEE;
+      border: 1px solid #888888;
+      text-align: center;
+      font-size: 30px;
+      z-index: 3;
+      cursor: default;
+      font-weight: bolder;
+
+      padding-top: 26px;
+      padding-bottom: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="root" touch-action="none"></canvas>
+  <div class="hidden" id="errorMessage"></div>
+</body>
+
+</html>

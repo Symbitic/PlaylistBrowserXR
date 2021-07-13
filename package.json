@@ -1,0 +1,74 @@
+{
+  "name": "playlist-browser-xr",
+  "description": "test",
+  "version": "1.0.0",
+  "author": "Alex Shaw <alex.shaw.as@gmail.com>",
+  "private": true,
+  "license": "MIT",
+  "repository": "https://github.com/Symbitic/AzureStaticTest",
+  "scripts": {
+    "lint": "eslint \"./src/**/*.{js,ts}\"",
+    "build:browser": "cross-env NODE_ENV=production webpack --env production",
+    "build:browser:dev": "cross-env NODE_ENV=development webpack --env development",
+    "build:api": "cd api && npm run build",
+    "build": "concurrently \"npm run build:api\" \"npm run build:browser\"",
+    "start:api": "cd api && npm run watch",
+    "start:devserver": "cross-env NODE_ENV=development webpack watch --env development",
+    "start:swa": "swa start dist --api api --port 8989",
+    "start": "concurrently --kill-others \"npm run start:api\" \"npm run start:devserver\" \"npm run start:swa\"",
+    "prestart": "npm run build:browser:dev",
+    "postinstall": "cd api && npm install"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,ts}": [
+      "eslint --fix",
+      "git add"
+    ]
+  },
+  "proxy": "http://localhost:7071",
+  "dependencies": {
+    "@babylonjs/core": "^4.2.0",
+    "@babylonjs/gui": "^4.2.0",
+    "@babylonjs/inspector": "^4.2.0",
+    "@babylonjs/loaders": "^4.2.0",
+    "@babylonjs/materials": "^4.2.0",
+    "cannon": "^0.6.2",
+    "spotify-web-playback": "^1.1.0"
+  },
+  "devDependencies": {
+    "@azure/static-web-apps-cli": "^0.6.1",
+    "@babel/core": "^7.14.3",
+    "@babel/plugin-transform-runtime": "^7.14.3",
+    "@babel/preset-env": "^7.14.2",
+    "@babel/preset-typescript": "^7.13.0",
+    "@babel/runtime": "^7.14.0",
+    "@types/cannon": "^0.1.5",
+    "@typescript-eslint/eslint-plugin": "^4.25.0",
+    "@typescript-eslint/parser": "^4.25.0",
+    "babel-loader": "^8.2.2",
+    "chalk": "^4.1.1",
+    "compression-webpack-plugin": "^8.0.0",
+    "concurrently": "^6.2.0",
+    "copy-webpack-plugin": "^9.0.0",
+    "cross-env": "^7.0.3",
+    "dotenv-webpack": "^7.0.3",
+    "eslint": "^7.27.0",
+    "eslint-plugin-import": "^2.23.3",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^5.1.0",
+    "file-loader": "^6.2.0",
+    "html-webpack-plugin": "^5.3.1",
+    "husky": "^7.0.0",
+    "lint-staged": "^11.0.0",
+    "typescript": "^4.3.2",
+    "url-loader": "^4.1.1",
+    "webpack": "^5.38.1",
+    "webpack-cli": "^4.7.0",
+    "webpack-dev-server": "^3.11.2"
+  }
+}

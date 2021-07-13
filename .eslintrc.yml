@@ -1,0 +1,30 @@
+env:
+  es6: true
+  browser: true
+
+parser: '@typescript-eslint/parser'
+
+parserOptions:
+  ecmaVersion: 2018
+  sourceType: module
+  project: './tsconfig.json'
+
+plugins:
+  - import
+  - '@typescript-eslint'
+
+extends:
+  - 'eslint:recommended'
+  - 'plugin:@typescript-eslint/recommended'
+
+rules:
+  no-console: "off"
+  linebreak-style:
+    - error
+    - unix
+  prefer-const:
+    - error
+  '@typescript-eslint/no-inferrable-types': off
+  '@typescript-eslint/no-unused-vars': off
+  '@typescript-eslint/explicit-module-boundary-types': off
+  '@typescript-eslint/no-empty-function': off
