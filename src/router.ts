@@ -79,6 +79,23 @@ export default class Router {
     });
   }
 
+  protected onTest(ret: boolean) {
+    if (ret) {
+      const expiresStr = localStorage.getItem(SPOTIFY_EXPIRES_AT_KEY) || "";
+      const expiresAt = parseInt(expiresStr, 10);
+      if (expiresAt !== NaN && this._refreshToken) {
+        const ms = expiresAt - Date.now();
+        this.startRefreshing(ms, this._refreshToken);
+      }
+
+      this.onTokenChangedObservable.notifyObservers(this.token);
+      this.onRouteChangedObservable.notifyObservers(Route.Home);
+    } else {
+      window.addEventListener("message", this._listener);
+      this.onRouteChangedObservable.notifyObservers(Route.Login);
+    }
+  };
+
   private onMessageReceived(evt: MessageEvent) {
     if (!evt.data || typeof evt.data !== 'string') {
       return;
@@ -92,7 +109,7 @@ export default class Router {
     if (!type || type !== 'success') {
       // TODO: switch(data) {} for a more human-useful error.
       //       might do this in callback.html
-      this.onErrorObservable.notifyObservers('Error authorizing Spotify');
+      this.onErrorObservable.notifyObservers(`Error authorizing Spotify: ${data}`);
     } else {
       this.authenticate(data).then(() => {
         this.onTokenChangedObservable.notifyObservers(this._token);
@@ -111,6 +128,11 @@ export default class Router {
   private onAuthenticated(accessToken: string, refreshToken: string, expiresAt: number) {
     this._token = accessToken;
     this._refreshToken = refreshToken;
+
+    if (!accessToken && !refreshToken) {
+      this.onErrorObservable.notifyObservers("Invalid Spotify tokens were received");
+      return;
+    }
 
     const ms = expiresAt - Date.now();
     this.startRefreshing(ms, refreshToken);
@@ -264,20 +286,40 @@ export default class Router {
       });
       if (!response.ok) {
         console.error(`Internal Error: ${response.statusText}`);
+        this.onErrorObservable.notifyObservers(`Internal Error: ${response.statusText}`);
         return;
       }
 
       const {
         access_token,
-        expires_at,
-        refresh_token
+        expires_at
       }: AuthenticationResult = await response.json();
 
-      this.onAuthenticated(access_token, refresh_token || access_token, expires_at);
+      this.onAuthenticated(access_token, token, expires_at);
     } catch (err) {
       const errorStr = `Internal error: ${err.message ? err.message : err}`
       console.error(errorStr);
       this.onErrorObservable.notifyObservers(errorStr);
     }
+  }
+
+  protected async fetch(url: string, method: string, token: string, payload?: any): Promise<Response> {
+    const headers = new Headers({
+      "Authorization": `Bearer ${token}`
+    });
+
+    const body = JSON.stringify(payload);
+
+    if (method === "POST") {
+      headers.append('Accept', 'application/json');
+      headers.append('Content-Type', 'text/xml');
+    }
+
+    const response = await fetch(url, {
+      headers,
+      body
+    });
+
+    return response;
   }
 };

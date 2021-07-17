@@ -50,6 +50,16 @@ async function authorize(context: Context, code: string, callback_uri: string) {
     expires_in
   } = await response.json();
 
+  if (!access_token || !refresh_token) {
+    const json = await response.json();
+    context.log.error(`Invalid Spotify response: ${JSON.stringify(json)}`);
+    context.res.json({
+      "type": "error",
+      "error": `Invalid Spotify response: ${JSON.stringify(json)}`
+    });
+    return;
+  }
+
   const d = new Date();
 
   d.setSeconds(d.getSeconds() + (expires_in - 300)); // Refresh 5 minutes before expiration.
@@ -92,9 +102,18 @@ async function refresh(context: Context, token: string) {
 
   const {
     access_token,
-    refresh_token,
     expires_in
   } = await response.json();
+
+  if (!access_token || !expires_in) {
+    const json = await response.json();
+    context.log.error(`Invalid Spotify response: ${JSON.stringify(json)}`);
+    context.res.json({
+      "type": "error",
+      "error": `Invalid Spotify response: ${JSON.stringify(json)}`
+    });
+    return;
+  }
 
   const d = new Date();
 
@@ -104,7 +123,7 @@ async function refresh(context: Context, token: string) {
 
   context.res.json({
     "access_token": access_token,
-    "refresh_token": refresh_token ? refresh_token : token,
+    "refresh_token": token,
     "expires_at": expiresAt
   });
 }
@@ -114,7 +133,8 @@ function unrecognized(context: Context, type: string) {
   context.res = {
     status: 200, // TODO: should this really be 200? It is programmer error.
     body: {
-      error: `Unrecognized type: ${type}`
+      "type": "error",
+      "error": `Unrecognized type: ${type}`
     }
   }
 }
