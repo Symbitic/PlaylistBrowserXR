@@ -48,6 +48,14 @@ window.addEventListener('DOMContentLoaded', async () => {
     return;
   }
 
+  const required = process.env.REQUIRE_WEBXR && process.env.REQUIRE_WEBXR === 'true';
+  if (required && !app.supported) {
+    const msg = 'WebXR is not supported';
+    console.error(msg);
+    app.showError(msg);
+    return app.run();
+  }
+
   router.onTokenChangedObservable.add(async (token: string) => {
     const connected = spotify.connected;
     if (connected) {

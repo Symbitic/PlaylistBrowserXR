@@ -19,12 +19,12 @@ import { EnvironmentHelper } from '@babylonjs/core/Helpers/environmentHelper';
 import { GridMaterial } from '@babylonjs/materials';
 
 import {
+  Control3D,
+  CylinderPanel,
   GUI3DManager,
   HolographicButton,
-  TextBlock,
   StackPanel3D,
-  CylinderPanel,
-  Control3D
+  TextBlock
 } from "@babylonjs/gui";
 
 import * as cannon from 'cannon';
@@ -166,9 +166,31 @@ export default class App {
     this.showPlaylists();
   }
 
-  showError(msg: string) {
+  showError(msg: string, internalError: boolean = false) {
     this.clearContainer();
-    this.setStatus(`A fatal error has occurred: ${msg}`);
+
+    const statusText = internalError ? "A fatal error has occurred" : 'Error';
+    this.setStatus(statusText);
+
+    const label = new HolographicLabel("error-msg", { width: 5.5, height: 2.0 });
+
+    // TODO: should this be an environment variable?
+    const GITHUB_URL = 'https://github.com/Symbitic/PlaylistBrowserXR';
+
+    const labelText = new TextBlock("error-text");
+    labelText.color = "white";
+    labelText.fontSize = "50px";
+    labelText.fontStyle = "bold";
+    labelText.text = internalError ? `${msg}\n\nThis is an internal error\nPlease report it at:\n${GITHUB_URL}/issues` : msg;
+
+    this._container.columns = 1;
+    this._container.addControl(label);
+
+    label.content = labelText;
+
+    if (internalError) {
+      // TODO: should label be a button to open GitHub?
+    }
   }
 
   setStatus(text: string, cb?: callback) {
@@ -188,7 +210,6 @@ export default class App {
 
   showLoginScreen() {
     this.clearContainer();
-
 
     const button = new HolographicLabel("login", { width: 1.32, height: 1.35 });
 

@@ -65,7 +65,7 @@ export default class Router {
       if (ret) {
         const expiresStr = localStorage.getItem(SPOTIFY_EXPIRES_AT_KEY) || "";
         const expiresAt = parseInt(expiresStr, 10);
-        if (expiresAt !== NaN && this._refreshToken) {
+        if (expiresAt !== NaN && expiresAt > 0 && this._refreshToken) {
           const ms = expiresAt - Date.now();
           this.startRefreshing(ms, this._refreshToken);
         }
@@ -197,6 +197,12 @@ export default class Router {
           "Authorization": `Bearer ${access_token}`
         }
       });
+      if (response.status === 401) {
+        const json = await response.json();
+        console.error(`401 response`);
+        console.dir(json);
+        return false;
+      }
       return response.ok;
     } catch (err) {
       return false;
