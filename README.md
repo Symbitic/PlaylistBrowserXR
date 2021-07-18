@@ -5,6 +5,8 @@
 
 Browse Spotify playlists in Virtual Reality.
 
+https://www.playlistbrowserxr.xyz/
+
 ## About
 
 Playlist Browser XR is a web player for Spotify playlists that exclusively use
@@ -85,12 +87,16 @@ redirect URLs before OAuth will work, that means we need a reserved domain name.
 
 ## Getting Started
 
+First, you will need to clone this repository. After that, follow these steps:
+
 1. Register a domain name at Ngrok. 
 2. Follow the steps [here](https://docs.microsoft.com/en-us/azure/static-web-apps/get-started-cli) to create a new Azure Static Web App. Make sure you take note of the URL for your new web app.
 3. Create a Spotify developer application. Take note of the client ID and client secret. Make sure to add `https://MY_NGROK_DOMAIN.ngrok.io/callback.html` and `https://MY_AZURE_URL.azurestaticapps.net/callback.html` to the Redirect URIs.
 4. Rename the file `.env.sample` to `.env` and replace the value of `SPOTIFY_CLIENT_ID` and `SPOTIFY_CLIENT_SECRET`.
 5. Edit the GitHub workflow file that was created in Step 2 (see note below).
-6. Update the badge locations in this file.
+6. Add `SPOTIFY_CLIENT_ID` and `SPOTIFY_CLIENT_SECRET` as repository secrets in GitHub settings.
+7. Add `SPOTIFY_CLIENT_ID` and `SPOTIFY_CLIENT_SECRET` as Application Settings in Azure (look in Configuration).
+8. Update the badge locations in this file.
 
 Once all that is done, you can build and run it like a standard Node.js web project.
 
